@@ -19,6 +19,7 @@ type Items struct {
 var posts = []Items{}
 var showItems = Items{}
 
+
 func main()  {
   handleFunc()
 }
@@ -62,13 +63,34 @@ func show_items (w http.ResponseWriter, r *http.Request){
 func handleFunc()  {
   rtr := mux.NewRouter()
   rtr.HandleFunc("/", index).Methods("GET")
-  rtr.HandleFunc("/create", create).Methods("GET")
-  rtr.HandleFunc("/save_article", save_article).Methods("POST")
-  rtr.HandleFunc("/post/{id:[0-9]+}", show_items).Methods("GET")
+  rtr.HandleFunc("/create", create_items).Methods("GET")
+  rtr.HandleFunc("/save_item", save_items).Methods("POST")
+  rtr.HandleFunc("/show_item/{id:[0-9]+}", show_items).Methods("GET")
+  rtr.HandleFunc("/delete_item/{id:[0-9]+}", delete_items)
 
   http.Handle("/", rtr)
   http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
   http.ListenAndServe(":1212", nil)
+}
+
+func delete_items(w http.ResponseWriter, r *http.Request){
+  vars := mux.Vars(r)
+
+
+  db, err := sql.Open("mysql", "inventory:inventory@tcp(127.0.0.1:3306)/inventory")
+  if err != nil{
+    panic(err)
+  }
+  defer db.Close()
+
+  //Удаление данных
+  delete, err := db.Query(fmt.Sprintf("DELETE FROM `items` WHERE `id` = '%s' ", vars["id"]))
+  if err != nil {
+    panic(err)
+  }
+  defer delete.Close()
+
+  http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func index(w http.ResponseWriter, r *http.Request){
@@ -105,7 +127,7 @@ func index(w http.ResponseWriter, r *http.Request){
 
 }
 
-func create(w http.ResponseWriter, r *http.Request){
+func create_items(w http.ResponseWriter, r *http.Request){
 	t, err := template.ParseFiles("templates/create.html", "templates/header.html", "templates/footer.html")
 
 	if err != nil{
@@ -116,7 +138,7 @@ func create(w http.ResponseWriter, r *http.Request){
 
 }
 
-func save_article(w http.ResponseWriter, r *http.Request){
+func save_items(w http.ResponseWriter, r *http.Request){
   title := r.FormValue("title")
   anons := r.FormValue("anons")
   full_text := r.FormValue("full_text")
