@@ -1,0 +1,22 @@
+{{ define "edit" }}
+
+{{ template "header" }}
+
+
+<!-- Комментарий     -->
+<main role="main" class="inner cover">
+<h1>Форма редактирования</h1>
+<form method="POST">
+  <input type="hidden" name="id" value="{{ .Id }}" ><br>
+  <input type="varchar" name="title" class="form-control" value="{{ .Title }}" ><br>
+  <input type="varchar" name="anons" class="form-control" value="{{ .Anons }}" ><br>
+  <input type="text" name="full_text" class="form-control" value="{{ .FullText }}" ><br>
+  <button class="btn btn-warning">Отправить</button><br>
+</form>
+</main>
+
+
+
+{{ template "footer" }}
+
+{{ end }}
