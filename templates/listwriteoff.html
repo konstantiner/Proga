@@ -1,0 +1,29 @@
+{{ define "listwriteoff" }}
+
+{{ template "header" }}
+
+<body>
+<h1>Списанные</h1>
+<table class="table table-striped table-bordered" >
+    {{ range . }}
+
+    <div >
+
+        <tr>
+            <td> <h2>{{ .Title}}</h2></td>
+            <td> <h2>{{ .Anons}}</h2></td>
+            <td> <h2>{{ .FullText}}</h2></td>
+            <td> <h2>{{ .Data}}</h2></td>
+        </tr>
+    </div>
+
+    {{ else }}
+    <p class="lead">Списаний нет!</p>
+    {{ end }}
+</table>
+
+</body>
+
+{{ template "footer" }}
+
+{{ end }}
